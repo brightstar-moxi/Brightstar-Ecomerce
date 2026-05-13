@@ -6,9 +6,9 @@ import {
   FaGoogle,
 } from "react-icons/fa";
 
-import { Eye, EyeOff } from "lucide-react";
+import { EyeOff } from "lucide-react";
 
-export default function LoginPage() {
+export default function SignupPage() {
   return (
     <main className="min-h-screen bg-[#F5F7FF] p-4 md:p-8">
       
@@ -20,11 +20,11 @@ export default function LoginPage() {
           {/* TOP */}
           <div>
             <h2 className="text-3xl font-bold">
-              Welcome Back! 👋
+              Create Account 🚀
             </h2>
 
             <p className="mt-4 max-w-xs text-indigo-100">
-              Please login to your account and continue shopping.
+              Join us today and start shopping the best premium products.
             </p>
           </div>
 
@@ -82,17 +82,30 @@ export default function LoginPage() {
             {/* TITLE */}
             <div>
               <h1 className="text-4xl font-bold text-slate-900">
-                Login to your account
+                Create your account
               </h1>
 
               <p className="mt-3 text-slate-500">
-                Welcome back! Please enter your details.
+                Fill in the details to create your account.
               </p>
             </div>
 
             {/* FORM */}
-            <form className="mt-10 space-y-6">
+            <form className="mt-10 space-y-5">
               
+              {/* FULL NAME */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Full Name
+                </label>
+
+                <input
+                  type="text"
+                  placeholder="Enter your full name"
+                  className="h-12 w-full rounded-xl border border-slate-300 text-slate-700 bg-white px-4 outline-none transition focus:border-indigo-600"
+                />
+              </div>
+
               {/* EMAIL */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -102,7 +115,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   placeholder="Enter your email"
-                  className="h-12 text-slate-700 w-full rounded-xl border border-slate-300 bg-white px-4 outline-none transition focus:border-indigo-600"
+                  className="h-12 w-full text-slate-700 rounded-xl border border-slate-300 bg-white px-4 outline-none transition focus:border-indigo-600"
                 />
               </div>
 
@@ -116,7 +129,7 @@ export default function LoginPage() {
                   
                   <input
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="Create a password"
                     className="flex-1 text-slate-700 bg-transparent outline-none"
                   />
 
@@ -129,28 +142,57 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              {/* OPTIONS */}
-              <div className="flex items-center justify-between">
-                
-                <label className="flex items-center gap-2 text-sm text-slate-600">
-                  <input type="checkbox" />
-                  Remember me
+              {/* CONFIRM PASSWORD */}
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-700">
+                  Confirm Password
                 </label>
 
-                <button
-                  type="button"
-                  className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
-                >
-                  Forgot password?
-                </button>
+                <div className="flex h-12 items-center rounded-xl border border-slate-300 px-4 focus-within:border-indigo-600">
+                  
+                  <input
+                    type="password"
+                    placeholder="Confirm your password"
+                    className="flex-1 text-slate-700 bg-transparent outline-none"
+                  />
+
+                  <button type="button">
+                    <EyeOff
+                      size={20}
+                      className="text-slate-400"
+                    />
+                  </button>
+                </div>
               </div>
 
-              {/* LOGIN BUTTON */}
+              {/* TERMS */}
+              <label className="flex items-start gap-3 text-sm text-slate-600">
+                <input type="checkbox" className="mt-1" />
+
+                <span>
+                  I agree to the{" "}
+                  <button
+                    type="button"
+                    className="font-medium text-indigo-600"
+                  >
+                    Terms & Conditions
+                  </button>{" "}
+                  and{" "}
+                  <button
+                    type="button"
+                    className="font-medium text-indigo-600"
+                  >
+                    Privacy Policy
+                  </button>
+                </span>
+              </label>
+
+              {/* SIGNUP BUTTON */}
               <button
                 type="submit"
                 className="h-12 w-full rounded-xl bg-indigo-600 font-medium text-white transition hover:bg-indigo-700"
               >
-                Login
+                Sign Up
               </button>
             </form>
 
@@ -165,7 +207,7 @@ export default function LoginPage() {
               <div className="h-px flex-1 bg-slate-200"></div>
             </div>
 
-            {/* SOCIAL LOGIN */}
+            {/* SOCIAL BUTTONS */}
             <div className="grid grid-cols-2 gap-4">
               
               <button className="flex h-12 items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-700 transition hover:bg-slate-50">
@@ -179,15 +221,15 @@ export default function LoginPage() {
               </button>
             </div>
 
-            {/* SIGNUP */}
+            {/* LOGIN */}
             <p className="mt-8 text-center text-sm text-slate-600">
-              Don&apos;t have an account?{" "}
+              Already have an account?{" "}
 
               <Link
-                href="/signup"
+                href="/login"
                 className="font-medium text-indigo-600 hover:text-indigo-700"
               >
-                Sign up
+                Login
               </Link>
             </p>
           </div>
