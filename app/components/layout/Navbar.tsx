@@ -84,7 +84,7 @@ export default function Navbar() {
           <div className="absolute right-0 top-0 h-full w-[280px] bg-white p-6 shadow-xl">
             
             {/* TOP */}
-            <div className="mb-8 flex items-center justify-between">
+            <div className="mb-8 flex items-center justify-between ">
               <h2 className="text-xl font-bold text-slate-900">
                 Menu
               </h2>
@@ -95,7 +95,7 @@ export default function Navbar() {
             </div>
 
             {/* LINKS */}
-            <nav className="flex flex-col gap-6">
+            <nav className="flex flex-col gap-6 ">
               <Link href="/" className="text-slate-700">
                 Shop
               </Link>

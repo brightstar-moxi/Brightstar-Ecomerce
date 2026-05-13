@@ -5,6 +5,7 @@ import Footer from "./components/layout/Footer";
 import HeroSection from "./components/home/HeroSection";
 import PromoBanner from "./components/home/PromoBanner";
 import Navbar from "./components/layout/Navbar";
+import NewsletterSection from "./components/home/NewsletterSection";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <FeaturedProducts/>
       <PromoBanner/>
       <FeaturesSection/>
+      <NewsletterSection/>
       <Footer/>
     </main>
   );
