@@ -1,5 +1,6 @@
 import CustomerSidebar from "../components/dashboard/CustomerSidebar";
 import DashboardStats from "../components/dashboard/DashboardStats";
+import DashboardTopbar from "../components/dashboard/DashboardTopbar";
 import ProductList from "../components/dashboard/ProductList";
 
 export default function DashboardPage() {
@@ -14,7 +15,10 @@ export default function DashboardPage() {
         {/* CONTENT */}
         <div className="flex-1 p-6 md:p-10">
           
-          {/* TOP */}
+          {/* TOPBAR */}
+          <DashboardTopbar />
+
+          {/* WELCOME */}
           <div className="mb-10">
             <h1 className="text-4xl font-bold text-slate-900">
               Welcome back, John! 👋
