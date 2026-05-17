@@ -1,3 +1,4 @@
+"use client";
 import AdminSidebar from "../AdminSiderbar";
 import AdminTopbar from "../AdminTopbar";
 import AdminStats from "../AdminStats";
@@ -16,7 +17,7 @@ export default function AdminDashboardPage() {
         <AdminSidebar />
 
         {/* CONTENT */}
-       <div className="flex-1 p-6 md:p-10 lg:ml-[290px]">
+       <div className="flex-1 p-6 pt-24 md:p-10 lg:ml-[290px] lg:pt-10">
           
           {/* TOPBAR */}
           <AdminTopbar />
