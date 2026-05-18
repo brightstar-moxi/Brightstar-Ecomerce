@@ -112,7 +112,7 @@ export default function AdminSidebar() {
 
       {/* SIDEBAR */}
       <aside
-        className={`fixed left-0 top-0 z-[1000] flex min-h-screen w-[290px] flex-col overflow-y-auto bg-[#071028] p-6 text-white transition-transform duration-300 lg:translate-x-0 ${
+      className={`fixed left-0 top-0 z-[1000] flex min-h-screen w-[290px] flex-col justify-between bg-[#071028] p-5 text-white transition-transform duration-300 lg:h-screen lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -136,7 +136,7 @@ export default function AdminSidebar() {
         </div>
 
         {/* MENU */}
-        <div className="mt-10 flex flex-col gap-2">
+        <div className="mt-3 flex flex-col gap-2">
           
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -160,8 +160,8 @@ export default function AdminSidebar() {
         </div>
 
         {/* PROFILE */}
-        <div className="mt-10 flex items-center gap-4 rounded-2xl bg-white/10 p-4">
-          
+    <div className="flex items-center gap-4 rounded-2xl bg-white/10 p-4">
+
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 font-bold">
             J
           </div>
