@@ -1,9 +1,29 @@
+"use client"
+import { useEffect } from "react";
+
+import { useRouter } from "next/navigation";
+
+import { getUser } from "@/lib/auth";
 import CustomerSidebar from "../components/dashboard/CustomerSidebar";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import DashboardTopbar from "../components/dashboard/DashboardTopbar";
 import ProductList from "../components/dashboard/ProductList";
 
 export default function DashboardPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+  const user = getUser();
+
+  if (!user) {
+    router.push("/login");
+    return;
+  }
+
+  if (user.role !== "customer") {
+    router.push("/admin");
+  }
+}, [router]);
   return (
     <main className="min-h-screen bg-slate-50">
       

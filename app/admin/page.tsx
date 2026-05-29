@@ -1,3 +1,10 @@
+"use client"
+// import { useEffect } from "react";
+// import { useState } from "react";
+
+// import { useRouter } from "next/navigation";
+
+// import { getUser } from "@/lib/auth";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,6 +15,29 @@ import {
 } from "lucide-react";
 
 export default function AdminPage() {
+//   const router = useRouter();
+//   const [authorized, setAuthorized] =
+//   useState(false);
+
+//   useEffect(() => {
+//   const user = getUser();
+
+//   if (!user) {
+//     router.replace("/admin");
+//     return;
+//   }
+
+//   if (user.role !== "admin") {
+//     router.replace("/dashboard");
+//     return;
+//   }
+
+//   setAuthorized(true);
+
+// }, [router]);
+// if (!authorized) {
+//   return null;
+// }
   return (
     <main className="min-h-screen overflow-hidden bg-[#F5F7FF]">
       
