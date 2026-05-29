@@ -1,11 +1,11 @@
 "use client";
-import AdminSidebar from "../AdminSiderbar";
-import AdminTopbar from "../AdminTopbar";
-import AdminStats from "../AdminStats";
-import SalesChart from "../SalesChart";
-import TopSellingProducts from "../TopSellingProducts";
-import OrderStatus from "../OrderStatus";
-import RecentCustomers from "../RecentCustomers";
+import AdminSidebar from "../../AdminSiderbar";
+import AdminTopbar from "../../AdminTopbar";
+import AdminStats from "../../AdminStats";
+import SalesChart from "../../SalesChart";
+import TopSellingProducts from "../../TopSellingProducts";
+import OrderStatus from "../../OrderStatus";
+import RecentCustomers from "../../RecentCustomers";
 
 export default function AdminDashboardPage() {
   return (

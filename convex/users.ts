@@ -60,6 +60,7 @@ export const login = mutation({
       .first();
 
     if (!user) {
+       console.log("NO USER FOUND:", args.email);
       throw new Error("Invalid credentials");
     }
 
@@ -70,6 +71,8 @@ export const login = mutation({
     // );
     const isMatch =
   args.password === user.password;
+  console.log("DATABASE USER:", user);
+console.log("PASSWORD MATCH:", isMatch);
 
     if (!isMatch) {
       throw new Error("Invalid credentials");
@@ -87,5 +90,27 @@ export const login = mutation({
 export const getUsers = query({
   handler: async (ctx) => {
     return await ctx.db.query("users").collect();
+  },
+});
+
+export const createFirstAdmin = mutation({
+  handler: async (ctx) => {
+    const admin = await ctx.db
+      .query("users")
+      .filter((q) =>
+        q.eq(q.field("email"), "admin@gmail.com")
+      )
+      .first();
+
+    if (admin) {
+      return admin._id;
+    }
+
+    return await ctx.db.insert("users", {
+      name: "Admin",
+      email: "admin@gmail.com",
+      password: "admin123",
+      role: "admin",
+    });
   },
 });

@@ -1,10 +1,10 @@
 "use client";
 
-import AdminSidebar from "../AdminSiderbar";
-import AdminTopbar from "../AdminTopbar";
-import CustomersTable from "../CustomersTable";
+import AdminSidebar from "../../AdminSiderbar";
+import AdminTopbar from "../../AdminTopbar";
+import ProductTable from "../../ProductTable";
 
-export default function CustomersPage() {
+export default function ProductsPage() {
   return (
     <main className="min-h-screen bg-slate-50">
       
@@ -20,7 +20,7 @@ export default function CustomersPage() {
           <AdminTopbar />
 
           {/* TABLE */}
-          <CustomersTable />
+          <ProductTable />
         </div>
       </div>
     </main>
