@@ -1,5 +1,9 @@
+"use client"
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 import {
   FaApple,
@@ -8,15 +12,71 @@ import {
 
 import { EyeOff } from "lucide-react";
 
+
 export default function SignupPage() {
+  const signup = useMutation(api.users.signup);
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [confirmPassword, setConfirmPassword] =
+    useState("");
+
+  const [agree, setAgree] = useState(false);
+
+  const handleSignup = async (
+    e: React.FormEvent<HTMLFormElement>
+  ) => {
+    e.preventDefault();
+if (
+  !name ||
+  !email ||
+  !password ||
+  !confirmPassword
+) {
+  return alert("Please fill all fields");
+}
+
+if (password.length < 6) {
+  return alert(
+    "Password must be at least 6 characters"
+  );
+}
+
+if (password !== confirmPassword) {
+  return alert("Passwords do not match");
+}
+
+if (!agree) {
+  return alert(
+    "Please agree to Terms & Conditions"
+  );
+}
+    try {
+      setLoading(true);
+
+      await signup({
+        name,
+        email,
+        password,
+      });
+
+      alert("Account created successfully");
+
+    } catch (error: any) {
+      alert(error?.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <main className="min-h-screen bg-[#F5F7FF] p-4 md:p-8">
-      
+
       <div className="mx-auto grid min-h-[90vh] max-w-7xl overflow-hidden rounded-[32px] bg-white shadow-xl md:grid-cols-2">
-        
+
         {/* LEFT SIDE */}
         <div className="relative hidden overflow-hidden bg-gradient-to-br from-indigo-600 to-blue-500 p-10 text-white md:flex md:flex-col md:justify-between">
-          
+
           {/* TOP */}
           <div>
             <h2 className="text-3xl font-bold">
@@ -41,7 +101,7 @@ export default function SignupPage() {
 
           {/* STATS */}
           <div className="flex items-center justify-between border-t border-white/20 pt-6">
-            
+
             <div>
               <h3 className="text-2xl font-bold">
                 10K+
@@ -76,9 +136,9 @@ export default function SignupPage() {
 
         {/* RIGHT SIDE */}
         <div className="flex items-center justify-center px-6 py-10 md:px-14">
-          
+
           <div className="w-full max-w-md">
-            
+
             {/* TITLE */}
             <div>
               <h1 className="text-4xl font-bold text-slate-900">
@@ -91,8 +151,8 @@ export default function SignupPage() {
             </div>
 
             {/* FORM */}
-            <form className="mt-10 space-y-5">
-              
+            <form onSubmit={handleSignup} className="mt-10 space-y-5">
+
               {/* FULL NAME */}
               <div>
                 <label className="mb-2 block text-sm font-medium text-slate-700">
@@ -103,6 +163,8 @@ export default function SignupPage() {
                   type="text"
                   placeholder="Enter your full name"
                   className="h-12 w-full rounded-xl border border-slate-300 text-slate-700 bg-white px-4 outline-none transition focus:border-indigo-600"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </div>
 
@@ -114,6 +176,8 @@ export default function SignupPage() {
 
                 <input
                   type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   className="h-12 w-full text-slate-700 rounded-xl border border-slate-300 bg-white px-4 outline-none transition focus:border-indigo-600"
                 />
@@ -126,14 +190,16 @@ export default function SignupPage() {
                 </label>
 
                 <div className="flex h-12 items-center rounded-xl border border-slate-300 px-4 focus-within:border-indigo-600">
-                  
+
                   <input
                     type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Create a password"
                     className="flex-1 text-slate-700 bg-transparent outline-none"
                   />
 
-                  <button type="button">
+                  <button type="button" >
                     <EyeOff
                       size={20}
                       className="text-slate-400"
@@ -149,9 +215,13 @@ export default function SignupPage() {
                 </label>
 
                 <div className="flex h-12 items-center rounded-xl border border-slate-300 px-4 focus-within:border-indigo-600">
-                  
+
                   <input
                     type="password"
+                    value={confirmPassword}
+                    onChange={(e) =>
+                      setConfirmPassword(e.target.value)
+                    }
                     placeholder="Confirm your password"
                     className="flex-1 text-slate-700 bg-transparent outline-none"
                   />
@@ -167,8 +237,14 @@ export default function SignupPage() {
 
               {/* TERMS */}
               <label className="flex items-start gap-3 text-sm text-slate-600">
-                <input type="checkbox" className="mt-1" />
-
+                <input
+  type="checkbox"
+  checked={agree}
+  onChange={(e) =>
+    setAgree(e.target.checked)
+  }
+  className="mt-1"
+/>
                 <span>
                   I agree to the{" "}
                   <button
@@ -190,9 +266,10 @@ export default function SignupPage() {
               {/* SIGNUP BUTTON */}
               <button
                 type="submit"
-                className="h-12 w-full rounded-xl bg-indigo-600 font-medium text-white transition hover:bg-indigo-700"
+                disabled={loading}
+                className="h-12 w-full rounded-xl bg-indigo-600 font-medium text-white transition hover:bg-indigo-700 disabled:opacity-70"
               >
-                Sign Up
+                {loading ? "Creating..." : "Sign Up"}
               </button>
             </form>
 
@@ -209,7 +286,7 @@ export default function SignupPage() {
 
             {/* SOCIAL BUTTONS */}
             <div className="grid grid-cols-2 gap-4">
-              
+
               <button className="flex h-12 items-center justify-center gap-3 rounded-xl border border-slate-300 bg-white font-medium text-slate-700 transition hover:bg-slate-50">
                 <FaGoogle />
                 Google
