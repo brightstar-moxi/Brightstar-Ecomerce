@@ -224,7 +224,6 @@ export default function LoginPage() {
                 {loading ? "Signing in..." : "Login"}
               </button>
             </form>
-
             {/* DIVIDER */}
             <div className="my-8 flex items-center gap-4">
               <div className="h-px flex-1 bg-slate-200"></div>
