@@ -52,6 +52,16 @@ export default function AdminTopbar() {
           <div className="flex h-11 w-11 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white shadow-sm sm:h-12 sm:w-12">
             J
           </div>
+          <button
+  onClick={() => {
+    localStorage.removeItem("user");
+    window.location.href = "/admin";
+  }}
+   className="mt-auto flex w-full items-center gap-3 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 font-medium text-red-500 transition-all duration-300 hover:bg-red-500 hover:text-white hover:shadow-lg hover:shadow-red-500/20"
+
+>
+  Logout
+</button>
         </div>
       </div>
     </div>

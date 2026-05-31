@@ -34,3 +34,11 @@ export default defineSchema({
     status: v.string(),
   }),
 });
+// products: defineTable({
+//   name: v.string(),
+//   description: v.string(),
+//   price: v.number(),
+//   stock: v.number(),
+//   image: v.string(),
+//   category: v.string(),
+// })

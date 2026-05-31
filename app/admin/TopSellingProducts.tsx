@@ -14,7 +14,7 @@ const products = [
     name: "Minimal Watch",
     category: "Accessories",
     amount: "$3,240",
-    image: "/watch.jpg",
+    image: "/product-3.jpg",
     progress: "65%",
   },
   {

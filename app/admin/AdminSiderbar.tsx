@@ -157,6 +157,7 @@ export default function AdminSidebar() {
               </Link>
             );
           })}
+          
         </div>
 
         {/* PROFILE */}
@@ -175,6 +176,7 @@ export default function AdminSidebar() {
               Admin
             </p>
           </div>
+          
         </div>
       </aside>
     </>
