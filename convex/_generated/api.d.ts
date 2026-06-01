@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as cart from "../cart.js";
 import type * as products from "../products.js";
 import type * as users from "../users.js";
 
@@ -20,6 +21,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  cart: typeof cart;
   products: typeof products;
   users: typeof users;
 }>;

@@ -33,6 +33,11 @@ export default defineSchema({
     proof: v.string(),
     status: v.string(),
   }),
+  carts: defineTable({
+  userId: v.id("users"),
+  productId: v.id("products"),
+  quantity: v.number(),
+})
 });
 // products: defineTable({
 //   name: v.string(),
@@ -42,3 +47,4 @@ export default defineSchema({
 //   image: v.string(),
 //   category: v.string(),
 // })
+
