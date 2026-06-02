@@ -1,6 +1,8 @@
 "use client";
-
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import Image from "next/image";
+import Link from "next/link";
 
 import {
   Bell,
@@ -9,6 +11,25 @@ import {
 } from "lucide-react";
 
 export default function DashboardTopbar() {
+  const user =
+  typeof window !== "undefined"
+    ? JSON.parse(
+        localStorage.getItem("user") || "{}"
+      )
+    : null;
+    const cartItems = useQuery(
+  api.cart.getCart,
+  user?.id
+    ? { userId: user.id }
+    : "skip"
+);
+
+const cartCount =
+  cartItems?.reduce(
+    (total, item) =>
+      total + item.quantity,
+    0
+  ) || 0;
   return (
     <div className="mb-10 flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
       
@@ -30,17 +51,24 @@ export default function DashboardTopbar() {
       {/* RIGHT */}
       <div className="flex items-center justify-between gap-5 lg:justify-end">
         {/* CART */}
-<button className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm">
-  
-  <ShoppingCart
-    size={20}
-    className="text-slate-700"
-  />
+<Link href="/cart">
 
-  <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-xs text-white">
-    2
-  </span>
-</button>
+  <button className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm">
+
+    <ShoppingCart
+      size={20}
+      className="text-slate-700"
+    />
+
+    {cartCount! > 0 && (
+      <span className="absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-xs text-white">
+        {cartCount}
+      </span>
+    )}
+
+  </button>
+
+</Link>
         {/* NOTIFICATION */}
         <button className="relative flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm">
           
