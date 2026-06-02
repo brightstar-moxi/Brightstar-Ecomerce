@@ -1,10 +1,115 @@
+// "use client";
+
+// import { useQuery } from "convex/react";
+// import { api } from "@/convex/_generated/api";
+// import Image from "next/image";
+// import { useMutation } from "convex/react";
+// import { useRouter } from "next/navigation";
+// import Navbar from "../components/layout/Navbar";
+
+// import {
+//   Minus,
+//   Plus,
+//   Trash2,
+//   ShieldCheck,
+// } from "lucide-react";
+
+// // const cartItems = [
+// //   {
+// //     id: 1,
+// //     name: "AirMax Running Shoes",
+// //     price: 129.99,
+// //     image: "/product-1.jpg",
+// //     color: "White",
+// //     quantity: 1,
+// //   },
+// //   {
+// //     id: 2,
+// //     name: "Wireless Headphones",
+// //     price: 89.99,
+// //     image: "/product-2.jpg",
+// //     color: "Black",
+// //     quantity: 1,
+// //   },
+// //   {
+// //     id: 3,
+// //     name: "Leather Backpack",
+// //     price: 149.99,
+// //     image: "/product-4.jpg",
+// //     color: "Brown",
+// //     quantity: 1,
+// //   },
+// // ];
+// // const cartItems = []
+
+// export default function CartPage() {
+//  const user =
+//   typeof window !== "undefined"
+//     ? JSON.parse(
+//         localStorage.getItem("user") || "{}"
+//       )
+//     : null;
+
+// const cartItems = useQuery(
+//   api.cart.getCart,
+//   user?.id
+//     ? { userId: user.id }
+//     : "skip"
+// );
+
+// if (cartItems === undefined) {
+//   return <p>Loading cart...</p>;
+// }
+
+// const subtotal = cartItems.reduce(
+//   (acc, item) =>
+//     acc +
+//     (item.product?.price || 0) *
+//       item.quantity,
+//   0
+// );
+
+// const shipping = 0;
+// const tax = 33.10;
+
+// const total = subtotal + shipping + tax;
+
+// const router = useRouter();
+
+// const createOrder = useMutation(
+//   api.orders.createOrder
+// );
+
+// const clearCart = useMutation(
+//   api.cart.clearCart
+// );
+// const handleCheckout = async () => {
+
+//   if (!user?.id) {
+//     return;
+//   }
+
+//   await createOrder({
+//     userId: user.id,
+//   });
+
+//   await clearCart({
+//     userId: user.id,
+//   });
+
+//   alert("Order placed successfully");
+
+//   router.push(
+//     "/dashboard/orders"
+//   );
+// };
+
 "use client";
-
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import Image from "next/image";
-
 import Navbar from "../components/layout/Navbar";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 import {
   Minus,
@@ -13,65 +118,51 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-// const cartItems = [
-//   {
-//     id: 1,
-//     name: "AirMax Running Shoes",
-//     price: 129.99,
-//     image: "/product-1.jpg",
-//     color: "White",
-//     quantity: 1,
-//   },
-//   {
-//     id: 2,
-//     name: "Wireless Headphones",
-//     price: 89.99,
-//     image: "/product-2.jpg",
-//     color: "Black",
-//     quantity: 1,
-//   },
-//   {
-//     id: 3,
-//     name: "Leather Backpack",
-//     price: 149.99,
-//     image: "/product-4.jpg",
-//     color: "Brown",
-//     quantity: 1,
-//   },
-// ];
-// const cartItems = []
-
 export default function CartPage() {
- const user =
-  typeof window !== "undefined"
-    ? JSON.parse(
-        localStorage.getItem("user") || "{}"
-      )
-    : null;
+  const router = useRouter();
 
-const cartItems = useQuery(
-  api.cart.getCart,
-  user?.id
-    ? { userId: user.id }
-    : "skip"
-);
+  const createOrder = useMutation(api.orders.createOrder);
+  const clearCart = useMutation(api.cart.clearCart);
 
-if (cartItems === undefined) {
-  return <p>Loading cart...</p>;
-}
+  // ✅ safe client-only state
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("user") || "null")
+      : null;
 
-const subtotal = cartItems.reduce(
-  (acc, item) =>
-    acc +
-    (item.product?.price || 0) *
-      item.quantity,
-  0
-);
+  const userId = user?.id ?? null;
 
-const shipping = 0;
-const tax = 33.10;
+  // ✅ IMPORTANT: do NOT conditionally change hook behavior
+  const cartItems = useQuery(
+    api.cart.getCart,
+    userId ? { userId } : "skip"
+  );
 
-const total = subtotal + shipping + tax;
+  if (cartItems === undefined) {
+    return <p>Loading cart...</p>;
+  }
+
+  const subtotal = cartItems.reduce(
+    (acc, item) =>
+      acc + (item.product?.price || 0) * item.quantity,
+    0
+  );
+
+  const shipping = 0;
+  const tax = 33.1;
+  const total = subtotal + shipping + tax;
+
+  const handleCheckout = async () => {
+    if (!userId) return;
+
+    await createOrder({ userId });
+    await clearCart({ userId });
+
+    alert("Order placed successfully");
+    router.push("/dashboard/orders");
+  };
+
+ 
   return (
     <main className="min-h-screen bg-slate-50">
 
@@ -229,7 +320,9 @@ const total = subtotal + shipping + tax;
             </div>
 
             {/* CHECKOUT */}
-            <button className="mt-8 h-14 w-full rounded-2xl bg-indigo-600 font-semibold text-white transition hover:bg-indigo-700">
+            <button
+            onClick={handleCheckout}
+            className="mt-8 h-14 w-full rounded-2xl bg-indigo-600 font-semibold text-white transition hover:bg-indigo-700">
               Proceed to Checkout
             </button>
 

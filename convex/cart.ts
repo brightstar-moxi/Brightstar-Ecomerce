@@ -88,3 +88,25 @@ export const getCart = query({
     );
   },
 });
+
+export const clearCart = mutation({
+  args: {
+    userId: v.id("users"),
+  },
+
+  handler: async (ctx, args) => {
+    const items = await ctx.db
+      .query("carts")
+      .filter((q) =>
+        q.eq(
+          q.field("userId"),
+          args.userId
+        )
+      )
+      .collect();
+
+    for (const item of items) {
+      await ctx.db.delete(item._id);
+    }
+  },
+});

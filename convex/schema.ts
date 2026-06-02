@@ -37,7 +37,13 @@ export default defineSchema({
   userId: v.id("users"),
   productId: v.id("products"),
   quantity: v.number(),
-})
+}),
+orderItems: defineTable({
+  orderId: v.id("orders"),
+  productId: v.id("products"),
+  quantity: v.number(),
+  price: v.number(),
+}),
 });
 // products: defineTable({
 //   name: v.string(),
