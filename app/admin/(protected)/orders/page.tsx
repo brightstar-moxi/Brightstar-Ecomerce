@@ -4,6 +4,7 @@ import AdminSidebar from "../../AdminSiderbar";
 import AdminTopbar from "../../AdminTopbar";
 import OrdersTable from "../../OrdersTable";
 
+
 export default function OrdersPage() {
   return (
     <main className="min-h-screen bg-slate-50">

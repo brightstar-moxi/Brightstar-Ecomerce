@@ -43,7 +43,10 @@ orderItems: defineTable({
   productId: v.id("products"),
   quantity: v.number(),
   price: v.number(),
+
+  
 }),
+
 });
 // products: defineTable({
 //   name: v.string(),

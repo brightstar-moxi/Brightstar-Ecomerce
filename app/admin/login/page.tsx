@@ -15,13 +15,27 @@ import {
 import { FaGoogle } from "react-icons/fa";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
+  // const router = useRouter();
 
   const login = useMutation(api.users.login);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+
+    if (!user) return;
+
+    const parsedUser = JSON.parse(user);
+
+    if (parsedUser.role === "admin") {
+      router.replace("/admin/dashboard");
+    }
+  }, [router]);
+
   const handleAdminLogin = async (
     e: React.FormEvent<HTMLFormElement>
   ) => {
@@ -39,7 +53,6 @@ export default function AdminLoginPage() {
         password,
       });
 
-      // ADMIN CHECK
       if (user.role !== "admin") {
         return alert(
           "Access denied. Admin account required."
@@ -55,22 +68,12 @@ export default function AdminLoginPage() {
 
     } catch (error: any) {
       alert(
-        error?.message || "Invalid credentials"
+        error?.message ||
+        "Invalid credentials"
       );
     } finally {
       setLoading(false);
     }
-    useEffect(() => {
-  const user = localStorage.getItem("user");
-
-  if (!user) return;
-
-  const parsedUser = JSON.parse(user);
-
-  if (parsedUser.role === "admin") {
-    router.replace("/admin/dashboard");
-  }
-}, [router]);
   };
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#F5F7FF] px-4 py-10">

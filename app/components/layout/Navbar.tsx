@@ -95,7 +95,7 @@ export default function Navbar() {
             </div>
 
             {/* LINKS */}
-            <nav className="flex flex-col gap-6 ">
+            <nav className="flex flex-col gap-6 bg-white ">
               <Link href="/" className="text-slate-700">
                 Shop
               </Link>
