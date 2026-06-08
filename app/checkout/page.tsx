@@ -3,44 +3,113 @@
 import Image from "next/image";
 
 import Navbar from "../components/layout/Navbar";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useMutation } from "convex/react";
+import { useRouter } from "next/navigation";
 
-const orderItems = [
-  {
-    id: 1,
-    name: "AirMax Running Shoes",
-    price: 129.99,
-    image: "/product-1.jpg",
-  },
-  {
-    id: 2,
-    name: "Wireless Headphones",
-    price: 89.99,
-    image: "/product-2.jpg",
-  },
-  {
-    id: 3,
-    name: "Leather Backpack",
-    price: 149.99,
-    image: "/product-4.jpg",
-  },
-];
+// const orderItems = [
+//   {
+//     id: 1,
+//     name: "AirMax Running Shoes",
+//     price: 129.99,
+//     image: "/product-1.jpg",
+//   },
+//   {
+//     id: 2,
+//     name: "Wireless Headphones",
+//     price: 89.99,
+//     image: "/product-2.jpg",
+//   },
+//   {
+//     id: 3,
+//     name: "Leather Backpack",
+//     price: 149.99,
+//     image: "/product-4.jpg",
+//   },
+// ];
 
 export default function CheckoutPage() {
+  const router = useRouter();
+  const clearCart = useMutation(
+  api.cart.clearCart
+);
+
+  const createOrder = useMutation(
+    api.orders.createOrder
+  );
+ const handleCheckout = async () => {
+  try {
+    if (!user?.id) {
+      alert("Please login first");
+      return;
+    }
+
+    await createOrder({
+      userId: user.id,
+    });
+
+    await clearCart({
+      userId: user.id,
+    });
+
+    alert("Order placed successfully");
+
+    router.push("/dashboard/orders");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to place order");
+  }
+};
+
+
+  const user =
+    typeof window !== "undefined"
+      ? JSON.parse(
+        localStorage.getItem("user") || "{}"
+      )
+      : null;
+
+  const cartItems = useQuery(
+    api.cart.getCart,
+    user?.id
+      ? { userId: user.id }
+      : "skip"
+  );
+
+  if (cartItems === undefined) {
+    return <p>Loading...</p>;
+  }
+  const subtotal = cartItems.reduce(
+    (acc, item) =>
+      acc +
+      (item.product?.price || 0) *
+      item.quantity,
+    0
+  );
+
+  const shipping = 0;
+  const tax = subtotal * 0.025;
+
+  const total =
+    subtotal + shipping + tax;
+    
+    
   return (
     <main className="min-h-screen bg-slate-50">
-      
+
       <Navbar />
 
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
-        
+
         {/* STEPS */}
         <div className="mb-14 flex items-center justify-center">
-          
+
           <div className="flex w-full max-w-3xl items-center justify-between">
-            
+
             {/* STEP 1 */}
             <div className="flex flex-col items-center">
-              
+
               <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-indigo-600 bg-white text-sm font-semibold text-indigo-600">
                 1
               </div>
@@ -55,7 +124,7 @@ export default function CheckoutPage() {
 
             {/* STEP 2 */}
             <div className="flex flex-col items-center">
-              
+
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
                 2
               </div>
@@ -70,7 +139,7 @@ export default function CheckoutPage() {
 
             {/* STEP 3 */}
             <div className="flex flex-col items-center">
-              
+
               <div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-300 bg-white text-sm font-semibold text-slate-500">
                 3
               </div>
@@ -84,23 +153,23 @@ export default function CheckoutPage() {
 
         {/* CONTENT */}
         <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-          
+
           {/* LEFT */}
           <div className="rounded-[32px] bg-white p-8 shadow-sm">
-            
+
             <h1 className="text-3xl font-bold text-slate-900">
               Payment Information
             </h1>
 
             {/* PAYMENT METHOD */}
             <div className="mt-10">
-              
+
               <h2 className="text-lg font-semibold text-slate-900">
                 Payment Method
               </h2>
 
               <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                
+
                 <h3 className="font-semibold text-slate-900">
                   Bank Transfer (Manual)
                 </h3>
@@ -111,7 +180,7 @@ export default function CheckoutPage() {
 
                 {/* BANK INFO */}
                 <div className="mt-8 grid gap-5 sm:grid-cols-2">
-                  
+
                   <div>
                     <p className="text-sm text-slate-500">
                       Bank Name
@@ -148,14 +217,14 @@ export default function CheckoutPage() {
                     </p>
 
                     <h4 className="mt-2 text-lg font-bold text-indigo-600">
-                      $403.27
+                       ₦{total.toFixed(2)}
                     </h4>
                   </div>
                 </div>
 
                 {/* RECEIPT */}
                 <div className="mt-10">
-                  
+
                   <label className="mb-3 block font-semibold text-slate-900">
                     Receipt
                   </label>
@@ -183,14 +252,44 @@ export default function CheckoutPage() {
 
           {/* RIGHT */}
           <div className="h-fit rounded-[32px] bg-white p-8 shadow-sm">
-            
+
             <h2 className="text-2xl font-bold text-slate-900">
               Order Summary
             </h2>
 
             {/* ITEMS */}
             <div className="mt-8 space-y-6">
-              
+              {cartItems.map((item) => (
+                <div
+                  key={item._id}
+                  className="flex items-center justify-between gap-4"
+                >
+                  <div className="flex items-center gap-4">
+
+                    <Image
+                      src={item.product?.image || "/placeholder.jpg"}
+                      alt={item.product?.name || "Product"}
+                      width={70}
+                      height={70}
+                      className="h-16 w-16 rounded-xl object-cover"
+                    />
+
+                    <div>
+                      <h3 className="font-semibold">
+                        {item.product?.name}
+                      </h3>
+
+                      <p className="text-sm text-slate-500">
+                        {item.quantity} × ₦
+                        {item.product?.price}
+                      </p>
+                    </div>
+
+                  </div>
+                </div>
+              ))}
+
+              {/*               
               {orderItems.map((item) => (
                 <div
                   key={item.id}
@@ -221,19 +320,19 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                 </div>
-              ))}
+              ))} */}
             </div>
 
             {/* TOTALS */}
             <div className="mt-10 space-y-5 border-t border-slate-200 pt-6">
-              
+
               <div className="flex items-center justify-between">
                 <span className="text-slate-500">
                   Subtotal
                 </span>
 
                 <span className="font-medium text-slate-900">
-                  $369.97
+                  ₦{subtotal.toLocaleString()}
                 </span>
               </div>
 
@@ -243,7 +342,7 @@ export default function CheckoutPage() {
                 </span>
 
                 <span className="font-medium text-slate-900">
-                  $0.00
+                   ₦0.00
                 </span>
               </div>
 
@@ -253,21 +352,30 @@ export default function CheckoutPage() {
                 </span>
 
                 <span className="font-medium text-slate-900">
-                  $33.30
+                  ₦{tax.toLocaleString()}
+                    {/* ₦{tax.toFixed(2)} */}
                 </span>
               </div>
 
               <div className="flex items-center justify-between border-t border-slate-200 pt-5">
-                
+
                 <span className="text-xl font-bold text-slate-900">
                   Total
                 </span>
 
                 <span className="text-2xl font-bold text-slate-900">
-                  $403.27
+                  {/* ₦{total.toLocaleString()} */}
+                {/* ₦{total.toFixed(2)} */}
+                ₦{Number(total).toLocaleString()}
                 </span>
               </div>
             </div>
+            <button
+              onClick={handleCheckout}
+              className="w-full rounded-2xl bg-indigo-600 py-4 text-white"
+            >
+              Place Order
+            </button>
           </div>
         </div>
       </section>

@@ -121,8 +121,8 @@ import {
 export default function CartPage() {
   const router = useRouter();
 
-  const createOrder = useMutation(api.orders.createOrder);
-  const clearCart = useMutation(api.cart.clearCart);
+  // const createOrder = useMutation(api.orders.createOrder);
+  // const clearCart = useMutation(api.cart.clearCart);
 
   // ✅ safe client-only state
   const user =
@@ -148,21 +148,25 @@ export default function CartPage() {
     0
   );
 
-  const shipping = 0;
-  const tax = 33.1;
-  const total = subtotal + shipping + tax;
+  // const shipping = 0;
+  // const tax = 33.1;
+  // const total = subtotal + shipping + tax;
+ const shipping = 0;
+  const tax = subtotal * 0.025;
 
-  const handleCheckout = async () => {
-    if (!userId) return;
+  const total =
+    subtotal + shipping + tax;
+  // const handleCheckout = async () => {
+  //   if (!userId) return;
 
-    await createOrder({ userId });
-    await clearCart({ userId });
+  //   await createOrder({ userId });
+  //   await clearCart({ userId });
 
-    alert("Order placed successfully");
-    router.push("/dashboard/orders");
-  };
+  //   alert("Order placed successfully");
+  //   router.push("/dashboard/orders");
+  // };
 
- 
+
   return (
     <main className="min-h-screen bg-slate-50">
 
@@ -211,8 +215,7 @@ export default function CartPage() {
                         src={
                           item.product?.image ||
                           "/placeholder-product.jpg"}
-                        alt= {item.product?.name ||
-                          "/placeholder-product.jpg"}
+                       alt={item.product?.name || "Product"}
                         width={100}
                         height={100}
                         className="h-24 w-24 object-cover"
@@ -235,7 +238,7 @@ export default function CartPage() {
 
                     {/* PRICE */}
                     <h3 className="w-24 text-lg font-semibold text-slate-900">
-                      ${item.product?.price}
+                     ₦{item.product?.price?.toLocaleString()}
                     </h3>
 
                     {/* QUANTITY */}
@@ -280,7 +283,7 @@ export default function CartPage() {
                 </span>
 
                 <span className="font-medium text-slate-900">
-                  ${subtotal.toFixed(2)}
+                 ₦{subtotal.toLocaleString()}
                 </span>
               </div>
 
@@ -290,7 +293,7 @@ export default function CartPage() {
                 </span>
 
                 <span className="font-medium text-slate-900">
-                  ${shipping.toFixed(2)}
+                  ₦{shipping.toFixed(2)}
                 </span>
               </div>
 
@@ -300,7 +303,7 @@ export default function CartPage() {
                 </span>
 
                 <span className="font-medium text-slate-900">
-                  ${tax.toFixed(2)}
+                 ₦{tax.toFixed(2)}
                 </span>
               </div>
 
@@ -313,16 +316,22 @@ export default function CartPage() {
                   </span>
 
                   <span className="text-2xl font-bold text-slate-900">
-                    ${total.toFixed(2)}
+                    ₦{total.toFixed(2)}
                   </span>
                 </div>
               </div>
             </div>
 
             {/* CHECKOUT */}
-            <button
+            {/* <button
             onClick={handleCheckout}
             className="mt-8 h-14 w-full rounded-2xl bg-indigo-600 font-semibold text-white transition hover:bg-indigo-700">
+              Proceed to Checkout
+            </button> */}
+            <button
+              onClick={() => router.push("/checkout")}
+              className="mt-8 h-14 w-full rounded-2xl bg-indigo-600 font-semibold text-white transition hover:bg-indigo-700"
+            >
               Proceed to Checkout
             </button>
 
