@@ -29,10 +29,11 @@ export default defineSchema({
   }),
 
   payments: defineTable({
-    orderId: v.id("orders"),
-    proof: v.string(),
-    status: v.string(),
-  }),
+  userId: v.id("users"),
+  proof: v.string(),
+  status: v.string(),
+  // orderId: v.optional(v.id("orders")),
+}),
   carts: defineTable({
   userId: v.id("users"),
   productId: v.id("products"),

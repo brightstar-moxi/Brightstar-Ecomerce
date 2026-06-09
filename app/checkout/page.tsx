@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-
+import { useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -30,18 +30,131 @@ import { useRouter } from "next/navigation";
 // ];
 
 export default function CheckoutPage() {
-  const router = useRouter();
-  const clearCart = useMutation(
+ const [paymentUploaded, setPaymentUploaded] =
+  useState(false);
+
+const [receipt, setReceipt] =
+  useState<File | null>(null);
+
+const router = useRouter();
+
+const clearCart = useMutation(
   api.cart.clearCart
 );
 
-  const createOrder = useMutation(
-    api.orders.createOrder
-  );
- const handleCheckout = async () => {
+const createOrder = useMutation(
+  api.orders.createOrder
+);
+
+const generateUploadUrl = useMutation(
+  api.payments.generateUploadUrl
+);
+
+const createPayment = useMutation(
+  api.payments.createPayment
+);
+
+const user =
+  typeof window !== "undefined"
+    ? JSON.parse(
+        localStorage.getItem("user") || "{}"
+      )
+    : null;
+
+/* =========================
+   CART
+========================= */
+
+const cartItems = useQuery(
+  api.cart.getCart,
+  user?.id
+    ? { userId: user.id }
+    : "skip"
+);
+
+if (cartItems === undefined) {
+  return <p>Loading...</p>;
+}
+
+const subtotal = cartItems.reduce(
+  (acc, item) =>
+    acc +
+    (item.product?.price || 0) *
+      item.quantity,
+  0
+);
+
+const shipping = 0;
+const tax = subtotal * 0.025;
+
+const total =
+  subtotal + shipping + tax;
+
+/* =========================
+   UPLOAD RECEIPT
+========================= */
+
+const handleUploadReceipt = async (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  try {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    setReceipt(file);
+
+    const postUrl =
+      await generateUploadUrl();
+
+    const result = await fetch(
+      postUrl,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            file.type,
+        },
+        body: file,
+      }
+    );
+
+    const { storageId } =
+      await result.json();
+
+    await createPayment({
+      userId: user.id,
+      proof: storageId,
+    });
+
+    setPaymentUploaded(true);
+
+    alert(
+      "Receipt uploaded successfully"
+    );
+  } catch (error) {
+    console.error(error);
+    alert(
+      "Failed to upload receipt"
+    );
+  }
+};
+
+/* =========================
+   PLACE ORDER
+========================= */
+
+const handleCheckout = async () => {
   try {
     if (!user?.id) {
       alert("Please login first");
+      return;
+    }
+
+    if (!paymentUploaded) {
+      alert(
+        "Upload payment proof first"
+      );
       return;
     }
 
@@ -53,48 +166,20 @@ export default function CheckoutPage() {
       userId: user.id,
     });
 
-    alert("Order placed successfully");
+    alert(
+      "Order placed successfully"
+    );
 
-    router.push("/dashboard/orders");
+    router.push(
+      "/dashboard/orders"
+    );
   } catch (error) {
     console.error(error);
-    alert("Failed to place order");
+    alert("Something went wrong");
   }
 };
 
 
-  const user =
-    typeof window !== "undefined"
-      ? JSON.parse(
-        localStorage.getItem("user") || "{}"
-      )
-      : null;
-
-  const cartItems = useQuery(
-    api.cart.getCart,
-    user?.id
-      ? { userId: user.id }
-      : "skip"
-  );
-
-  if (cartItems === undefined) {
-    return <p>Loading...</p>;
-  }
-  const subtotal = cartItems.reduce(
-    (acc, item) =>
-      acc +
-      (item.product?.price || 0) *
-      item.quantity,
-    0
-  );
-
-  const shipping = 0;
-  const tax = subtotal * 0.025;
-
-  const total =
-    subtotal + shipping + tax;
-    
-    
   return (
     <main className="min-h-screen bg-slate-50">
 
@@ -217,7 +302,7 @@ export default function CheckoutPage() {
                     </p>
 
                     <h4 className="mt-2 text-lg font-bold text-indigo-600">
-                       ₦{total.toFixed(2)}
+                      ₦{total.toFixed(2)}
                     </h4>
                   </div>
                 </div>
@@ -235,8 +320,8 @@ export default function CheckoutPage() {
 
                   <input
                     type="file"
-                    className="hidden"
-                    id="paymentProof"
+                    accept="image/*,.pdf"
+                    onChange={handleUploadReceipt}
                   />
 
                   <label
@@ -342,7 +427,7 @@ export default function CheckoutPage() {
                 </span>
 
                 <span className="font-medium text-slate-900">
-                   ₦0.00
+                  ₦0.00
                 </span>
               </div>
 
@@ -353,7 +438,7 @@ export default function CheckoutPage() {
 
                 <span className="font-medium text-slate-900">
                   ₦{tax.toLocaleString()}
-                    {/* ₦{tax.toFixed(2)} */}
+                  {/* ₦{tax.toFixed(2)} */}
                 </span>
               </div>
 
@@ -365,17 +450,18 @@ export default function CheckoutPage() {
 
                 <span className="text-2xl font-bold text-slate-900">
                   {/* ₦{total.toLocaleString()} */}
-                {/* ₦{total.toFixed(2)} */}
-                ₦{Number(total).toLocaleString()}
+                  {/* ₦{total.toFixed(2)} */}
+                  ₦{Number(total).toLocaleString()}
                 </span>
               </div>
             </div>
-            <button
-              onClick={handleCheckout}
-              className="w-full rounded-2xl bg-indigo-600 py-4 text-white"
-            >
-              Place Order
-            </button>
+           <button
+  disabled={!paymentUploaded}
+  onClick={handleCheckout}
+  className="mt-8 h-14 w-full rounded-2xl bg-indigo-600 font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50"
+>
+  Place Order
+</button>
           </div>
         </div>
       </section>
