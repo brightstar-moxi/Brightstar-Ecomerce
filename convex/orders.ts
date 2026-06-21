@@ -31,15 +31,14 @@ export const createOrder = mutation({
         (product?.price || 0) *
         item.quantity;
     }
-
-    const orderId = await ctx.db.insert(
-      "orders",
-      {
-        userId: args.userId,
-        total,
-        status: "Pending",
-      }
-    );
+const orderId = await ctx.db.insert(
+  "orders",
+  {
+    userId: args.userId,
+    total,
+    status: "Pending Payment Approval",
+  }
+);
 
     // CREATE ORDER ITEMS
     for (const item of cartItems) {
@@ -68,7 +67,7 @@ export const getOrders = query({
   },
 
   handler: async (ctx, args) => {
-    return await ctx.db
+    const orders = await ctx.db
       .query("orders")
       .filter((q) =>
         q.eq(
@@ -77,9 +76,41 @@ export const getOrders = query({
         )
       )
       .collect();
-  },
 
-  
+    return await Promise.all(
+      orders.map(async (order) => {
+        const items = await ctx.db
+          .query("orderItems")
+          .filter((q) =>
+            q.eq(
+              q.field("orderId"),
+              order._id
+            )
+          )
+          .collect();
+
+        const products =
+          await Promise.all(
+            items.map(async (item) => {
+              const product =
+                await ctx.db.get(
+                  item.productId
+                );
+
+              return {
+                ...item,
+                product,
+              };
+            })
+          );
+
+        return {
+          ...order,
+          products,
+        };
+      })
+    );
+  },
 });
 // export const getAllOrders = query({
 //   handler: async (ctx) => {

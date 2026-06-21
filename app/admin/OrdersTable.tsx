@@ -132,21 +132,45 @@ export default function OrdersTable() {
                 </td>
 
                 <td className="py-5">
-                  <select
-                    value={order.status}
-                    onChange={(e) =>
-                      updateStatus({
-                        orderId: order._id,
-                        status: e.target.value,
-                      })
-                    }
-                    className="rounded-lg border px-3 py-2"
-                  >
-                    <option value="Pending">Pending</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Delivered">Delivered</option>
-                  </select>
+
+                  {order.status ===
+                    "Pending Payment Approval" ? (
+
+                    <span className="rounded-full bg-yellow-100 px-4 py-2 text-sm text-yellow-700">
+                      Awaiting Payment Approval
+                    </span>
+
+                  ) : (
+
+                    <select
+                      disabled={[
+                        "Pending Payment Approval",
+                        "Payment Rejected",
+                      ].includes(order.status)}
+                      value={order.status}
+                      onChange={(e) =>
+                        updateStatus({
+                          orderId: order._id,
+                          status: e.target.value,
+                        })
+                      }
+                      className="rounded-lg border px-3 py-2"
+                    >
+                      <option value="Processing">
+                        Processing
+                      </option>
+
+                      <option value="Shipped">
+                        Shipped
+                      </option>
+
+                      <option value="Delivered">
+                        Delivered
+                      </option>
+                    </select>
+
+                  )}
+                  {/* {order.status} */}
                 </td>
 
                 <td className="py-5 text-slate-600">
@@ -252,7 +276,7 @@ export default function OrdersTable() {
                   {selectedOrder._id}
                 </h3>
               </div>
-  {/* DEBUG
+              {/* DEBUG
       <pre className="mt-4 overflow-auto rounded bg-slate-100 p-3 text-xs">
         {JSON.stringify(selectedOrder, null, 2)}
       </pre> */}

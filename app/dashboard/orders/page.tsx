@@ -29,26 +29,74 @@ export default function OrdersPage() {
       </h1>
 
       <div className="space-y-4">
-        {orders.map((order) => (
+      {orders.map((order) => (
+  <div
+    key={order._id}
+    className="rounded-xl border p-4"
+  >
+    <p>
+      Order ID: {order._id}
+    </p>
+
+    <div className="my-3">
+      <span
+        className={`rounded-full px-3 py-1 text-sm font-medium ${
+          order.status === "Processing"
+            ? "bg-blue-100 text-blue-700"
+            : order.status === "Shipped"
+            ? "bg-purple-100 text-purple-700"
+            : order.status === "Delivered"
+            ? "bg-green-100 text-green-700"
+            : order.status === "Payment Rejected"
+            ? "bg-red-100 text-red-700"
+            : "bg-yellow-100 text-yellow-700"
+        }`}
+      >
+        {order.status}
+      </span>
+    </div>
+
+    <p className="mb-4">
+      Total: ₦
+      {order.total.toLocaleString()}
+    </p>
+
+    {/* PRODUCTS */}
+    <div className="space-y-4">
+      {order.products?.map(
+        (item: any) => (
           <div
-            key={order._id}
-            className="rounded-xl border p-4"
+            key={item._id}
+            className="flex items-center gap-4"
           >
-            <p>
-              Order ID: {order._id}
-            </p>
+            <img
+              src={item.product?.image}
+              alt={item.product?.name}
+              className="h-16 w-16 rounded-xl object-cover"
+            />
 
-            <p>
-              Status: {order.status}
-            </p>
+            <div>
+              <h3 className="font-semibold">
+                {item.product?.name}
+              </h3>
 
-            <p>
-              Total: ₦
-              {order.total.toLocaleString()}
-            </p>
+              <p className="text-sm text-slate-500">
+                Qty: {item.quantity}
+              </p>
+
+              <p className="font-medium">
+                ₦
+                {item.price.toLocaleString()}
+              </p>
+            </div>
           </div>
-        ))}
+        )
+      )}
+    </div>
+  </div>
+))}
       </div>
+      
     </main>
   );
 }

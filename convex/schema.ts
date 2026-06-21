@@ -28,7 +28,7 @@ export default defineSchema({
     status: v.string(),
   }),
 
-  payments: defineTable({
+payments: defineTable({
   userId: v.id("users"),
   proof: v.id("_storage"),
   status: v.string(),

@@ -4,20 +4,19 @@ import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const createPayment = mutation({
-  args: {
-    userId: v.id("users"),
-    proof: v.id("_storage"),
-  },
+ args: {
+  // orderId: v.id("orders"),
+  userId: v.id("users"),
+  proof: v.id("_storage"),
+},
 
   handler: async (ctx, args) => {
-    return await ctx.db.insert(
-      "payments",
-      {
-        userId: args.userId,
-        proof: args.proof,
-        status: "Pending",
-      }
-    );
+   return await ctx.db.insert("payments", {
+  // orderId: args.orderId,
+  userId: args.userId,
+  proof: args.proof,
+  status: "Pending",
+});
   },
 });
 
@@ -63,14 +62,65 @@ export const updatePaymentStatus =
       status: v.string(),
     },
 
-    handler: async (ctx, args) => {
-      await ctx.db.patch(
-        args.paymentId,
-        {
-          status: args.status,
-        }
-      );
-    },
+   handler: async (ctx, args) => {
+
+  await ctx.db.patch(
+    args.paymentId,
+    {
+      status: args.status,
+    }
+  );
+
+  const payment = await ctx.db.get(
+    args.paymentId
+  );
+
+  if (!payment) return;
+
+  const order = await ctx.db
+    .query("orders")
+    .filter((q) =>
+      q.eq(
+        q.field("userId"),
+        payment.userId
+      )
+    )
+    .order("desc")
+    .first();
+
+  if (!order) return;
+
+  // PAYMENT APPROVED
+  if (args.status === "Approved") {
+    await ctx.db.patch(
+      order._id,
+      {
+        status: "Processing",
+      }
+    );
+  }
+
+  // PAYMENT REJECTED
+  if (args.status === "Rejected") {
+    await ctx.db.patch(
+      order._id,
+      {
+        status: "Payment Rejected",
+      }
+    );
+  }
+
+  // PAYMENT PENDING
+  if (args.status === "Pending") {
+    await ctx.db.patch(
+      order._id,
+      {
+        status:
+          "Pending Payment Approval",
+      }
+    );
+  }
+}
   });
 
   export const getReceiptUrl = query({
