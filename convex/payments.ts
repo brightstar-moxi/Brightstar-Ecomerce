@@ -6,15 +6,18 @@ import { v } from "convex/values";
 export const createPayment = mutation({
   args: {
     userId: v.id("users"),
-    proof: v.string(),
+    proof: v.id("_storage"),
   },
 
   handler: async (ctx, args) => {
-    return await ctx.db.insert("payments", {
-      userId: args.userId,
-      proof: args.proof,
-      status: "Pending",
-    });
+    return await ctx.db.insert(
+      "payments",
+      {
+        userId: args.userId,
+        proof: args.proof,
+        status: "Pending",
+      }
+    );
   },
 });
 
@@ -30,15 +33,22 @@ export const getAllPayments = query({
           payment.userId
         );
 
+        const proofUrl =
+          await ctx.storage.getUrl(
+            payment.proof
+          );
+
         return {
           ...payment,
           customerName:
             user?.name || "Unknown User",
+          proofUrl,
         };
       })
     );
   },
 });
+
 
 export const generateUploadUrl = mutation({
   handler: async (ctx) => {

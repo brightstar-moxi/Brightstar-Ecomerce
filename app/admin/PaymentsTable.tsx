@@ -200,68 +200,107 @@ export default function PaymentsTable() {
     api.payments.updatePaymentStatus
   );
 
-  if (!payments) {
+  if (payments === undefined) {
     return <p>Loading...</p>;
   }
 
   return (
-    <div className="rounded-3xl bg-white p-6 shadow-sm">
+    <div className="rounded-[32px] bg-white p-6 shadow-sm md:p-8">
 
-      <h2 className="mb-6 text-2xl font-bold">
+      <h2 className="mb-8 text-2xl font-bold text-slate-900">
         Payments
       </h2>
 
-      <table className="w-full">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Proof</th>
-            <th>Status</th>
-          </tr>
-        </thead>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[700px]">
 
-        <tbody>
-          {payments.map((payment) => (
-            <tr key={payment._id}>
+          <thead>
+            <tr className="border-b border-slate-200 text-left text-sm text-slate-500">
+              <th className="pb-4 font-medium">
+                Customer
+              </th>
 
-              <td>
-                {payment.customerName}
-              </td>
+              <th className="pb-4 font-medium">
+                Receipt
+              </th>
 
-              <td>
-                {payment.proof}
-              </td>
+              <th className="pb-4 font-medium">
+                Status
+              </th>
 
-              <td>
-                <select
-                  value={payment.status}
-                  onChange={(e) =>
-                    updateStatus({
-                      paymentId:
-                        payment._id,
-                      status:
-                        e.target.value,
-                    })
-                  }
-                >
-                  <option>
-                    Pending
-                  </option>
-
-                  <option>
-                    Approved
-                  </option>
-
-                  <option>
-                    Rejected
-                  </option>
-                </select>
-              </td>
-
+              <th className="pb-4 font-medium">
+                Date
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {payments.map((payment) => (
+              <tr
+                key={payment._id}
+                className="border-b border-slate-100"
+              >
+
+                {/* CUSTOMER */}
+                <td className="py-5">
+                  {payment.customerName}
+                </td>
+
+                {/* RECEIPT */}
+                <td className="py-5">
+                  {payment.proofUrl ? (
+  <a
+    href={payment.proofUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    View Receipt
+  </a>
+) : (
+  <span>No Receipt</span>
+)}
+                </td>
+
+                {/* STATUS */}
+                <td className="py-5">
+                  <select
+                    value={payment.status}
+                    onChange={(e) =>
+                      updateStatus({
+                        paymentId: payment._id,
+                        status: e.target.value,
+                      })
+                    }
+                    className="rounded-xl border border-slate-200 px-3 py-2"
+                  >
+                    <option value="Pending">
+                      Pending
+                    </option>
+
+                    <option value="Approved">
+                      Approved
+                    </option>
+
+                    <option value="Rejected">
+                      Rejected
+                    </option>
+                  </select>
+                </td>
+
+                {/* DATE */}
+                <td className="py-5 text-slate-500">
+                  {new Date(
+                    payment._creationTime
+                  ).toLocaleDateString()}
+                </td>
+
+              </tr>
+            ))}
+          </tbody>
+
+        </table>
+      </div>
+
     </div>
   );
 }

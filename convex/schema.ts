@@ -30,9 +30,8 @@ export default defineSchema({
 
   payments: defineTable({
   userId: v.id("users"),
-  proof: v.string(),
+  proof: v.id("_storage"),
   status: v.string(),
-  // orderId: v.optional(v.id("orders")),
 }),
   carts: defineTable({
   userId: v.id("users"),
