@@ -64,9 +64,12 @@ export default function Navbar() {
           </button>
 
           {/* LOGIN */}
-          <button className="rounded-xl bg-indigo-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-indigo-700">
-            Login
-          </button>
+         <Link
+  href="/login"
+  className="rounded-xl bg-indigo-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
+>
+  Login
+</Link>
         </div>
 
         {/* MOBILE MENU BUTTON */}
@@ -114,9 +117,12 @@ export default function Navbar() {
             </nav>
 
             {/* LOGIN BUTTON */}
-            <button className="mt-10 w-full rounded-xl bg-indigo-600 py-3 font-medium text-white">
-              Login
-            </button>
+           <Link
+  href="/login"
+  className="mt-10 block w-full rounded-xl bg-indigo-600 py-3 text-center font-medium text-white"
+>
+  Login
+</Link>
           </div>
         </div>
       )}

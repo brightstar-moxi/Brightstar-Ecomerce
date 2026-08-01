@@ -200,3 +200,60 @@ export const updateOrderStatus =
     await ctx.db.delete(args.orderId);
   },
 });
+
+export const getDashboardStats = query({
+  args: {
+    userId: v.id("users"),
+  },
+
+  handler: async (ctx, args) => {
+    const orders = await ctx.db
+      .query("orders")
+      .filter((q) =>
+        q.eq(
+          q.field("userId"),
+          args.userId
+        )
+      )
+      .collect();
+
+    const totalOrders =
+      orders.length;
+
+    const pendingOrders =
+      orders.filter(
+        (o) =>
+          o.status ===
+            "Pending Payment Approval" ||
+          o.status ===
+            "Processing"
+      ).length;
+
+    const deliveredOrders =
+      orders.filter(
+        (o) =>
+          o.status ===
+          "Delivered"
+      ).length;
+
+    const totalSpent =
+      orders
+        .filter(
+          (o) =>
+            o.status !==
+            "Payment Rejected"
+        )
+        .reduce(
+          (sum, order) =>
+            sum + order.total,
+          0
+        );
+
+    return {
+      totalOrders,
+      pendingOrders,
+      deliveredOrders,
+      totalSpent,
+    };
+  },
+});
