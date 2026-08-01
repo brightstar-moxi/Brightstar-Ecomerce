@@ -114,3 +114,29 @@ export const createFirstAdmin = mutation({
     });
   },
 });
+export const updateProfile = mutation({
+  args: {
+    userId: v.id("users"),
+    name: v.string(),
+    phone: v.optional(v.string()),
+  },
+
+  handler: async (ctx, args) => {
+    await ctx.db.patch(args.userId, {
+      name: args.name,
+      phone: args.phone,
+    });
+  },
+});
+
+export const getUserById = query({
+  args: {
+    userId: v.id("users"),
+  },
+
+  handler: async (ctx, args) => {
+    return await ctx.db.get(
+      args.userId
+    );
+  },
+});

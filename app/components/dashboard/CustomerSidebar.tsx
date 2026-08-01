@@ -27,26 +27,26 @@ const menuItems = [
     icon: ShoppingBag,
     href: "/dashboard/orders",
   },
-  {
-    title: "Wishlist",
-    icon: Heart,
-    href: "/dashboard/wishlist",
-  },
+  // {
+  //   title: "Wishlist",
+  //   icon: Heart,
+  //   href: "/dashboard/wishlist",
+  // },
   {
     title: "Messages",
     icon: MessageSquare,
     href: "/dashboard/messages",
   },
-  {
-    title: "Addresses",
-    icon: MapPin,
-    href: "/dashboard/address",
-  },
-  {
-    title: "Payment Methods",
-    icon: CreditCard,
-    href: "/dashboard/payment",
-  },
+  // {
+  //   title: "Addresses",
+  //   icon: MapPin,
+  //   href: "/dashboard/address",
+  // },
+  // // {
+  //   title: "Payment Methods",
+  //   icon: CreditCard,
+  //   href: "/dashboard/payment",
+  // },
   {
     title: "Account Settings",
     icon: Settings,
@@ -81,10 +81,18 @@ export default function CustomerSidebar() {
       />
 
       {/* SIDEBAR */}
-      <aside
-        className={`fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col border-r border-slate-200 bg-white p-6 transition-transform duration-300 lg:static lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"
+      {/* <aside
+        className={`fixed left-0 top-0 z-50 flex h-full w-[280px] flex-col border-r border-slate-200 bg-white p-6 transition-transform duration-300 lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"
           }`}
-      >
+      > */}
+      <aside
+  className={`fixed left-0 top-0 z-50 h-screen w-[280px]
+  flex flex-col border-r border-slate-200 bg-white p-6
+  overflow-y-auto
+  transition-transform duration-300
+  ${open ? "translate-x-0" : "-translate-x-full"}
+  lg:translate-x-0`}
+>
 
         {/* TOP */}
         <div className="flex items-center justify-between">

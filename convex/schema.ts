@@ -10,6 +10,8 @@ export default defineSchema({
       v.literal("admin"),
       v.literal("customer")
     ),
+    phone: v.optional(v.string()),
+avatar: v.optional(v.string()),
   }),
 
   products: defineTable({

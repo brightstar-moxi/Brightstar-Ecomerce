@@ -1,8 +1,9 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery,useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import OrderTimeline from "@/app/components/orders/OrdersTimeline";
+
 export default function OrdersPage() {
   const user =
     typeof window !== "undefined"
@@ -18,10 +19,67 @@ export default function OrdersPage() {
       : "skip"
   );
 
-  if (orders === undefined) {
+  const payment = useQuery(
+    api.payments.getMyPayment,
+    user?.id
+      ? { userId: user.id }
+      : "skip"
+  );
+
+  const generateUploadUrl =
+    useMutation(
+      api.payments.generateUploadUrl
+    );
+
+  const updateReceipt =
+    useMutation(
+      api.payments.updateReceipt
+    );
+
+  const handleReUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file =
+      e.target.files?.[0];
+
+    if (!file || !payment)
+      return;
+
+    const postUrl =
+      await generateUploadUrl();
+
+    const result =
+      await fetch(postUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            file.type,
+        },
+        body: file,
+      });
+
+    const { storageId } =
+      await result.json();
+
+    await updateReceipt({
+      paymentId:
+        payment._id,
+      proof: storageId,
+    });
+
+    alert(
+      "Receipt uploaded successfully"
+    );
+  };
+
+  if (
+    orders === undefined ||
+    payment === undefined
+  ) {
     return <p>Loading...</p>;
   }
 
+ 
   return (
     <main className="mx-auto max-w-6xl p-6">
       <h1 className="mb-8 text-4xl font-bold text-slate-900">
@@ -155,11 +213,19 @@ export default function OrdersPage() {
     />
 
        {order.status === "Payment Rejected" && (
-      <button
-        className="mt-6 rounded-xl bg-red-600 px-5 py-3 font-medium text-white transition hover:bg-red-700"
-      >
-        Upload New Receipt
-      </button>
+    <label className="mt-6 inline-flex cursor-pointer rounded-xl bg-red-600 px-5 py-3 font-medium text-white">
+
+  Upload New Receipt
+
+  <input
+    type="file"
+    className="hidden"
+    onChange={
+      handleReUpload
+    }
+  />
+
+</label>
     )}
 
   </div>

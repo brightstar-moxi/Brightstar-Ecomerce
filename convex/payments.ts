@@ -134,3 +134,39 @@ export const updatePaymentStatus =
     );
   },
 });
+
+
+export const updateReceipt = mutation({
+  args: {
+    paymentId: v.id("payments"),
+    proof: v.id("_storage"),
+  },
+
+  handler: async (ctx, args) => {
+    await ctx.db.patch(
+      args.paymentId,
+      {
+        proof: args.proof,
+        status: "Pending",
+      }
+    );
+  },
+});
+export const getMyPayment = query({
+  args: {
+    userId: v.id("users"),
+  },
+
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("payments")
+      .filter((q) =>
+        q.eq(
+          q.field("userId"),
+          args.userId
+        )
+      )
+      .order("desc")
+      .first();
+  },
+});
