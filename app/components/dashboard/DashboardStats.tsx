@@ -2,24 +2,27 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-
+import {
+  Package,
+  Clock3,
+  CheckCircle,
+  Wallet,
+} from "lucide-react";
 
 export default function DashboardStats() {
   const user =
     typeof window !== "undefined"
       ? JSON.parse(
-          localStorage.getItem("user") ||
-            "{}"
+          localStorage.getItem("user") || "{}"
         )
       : null;
 
-  const stats =
-    useQuery(
-      api.orders.getDashboardStats,
-      user?.id
-        ? { userId: user.id }
-        : "skip"
-    );
+  const stats = useQuery(
+    api.orders.getDashboardStats,
+    user?.id
+      ? { userId: user.id }
+      : "skip"
+  );
 
   if (!stats) {
     return null;
@@ -27,39 +30,51 @@ export default function DashboardStats() {
 
   const cards = [
     {
-      title: "Total Orders",
+      title: "Orders",
       value: stats.totalOrders,
+      icon: Package,
     },
     {
-      title: "Pending Orders",
+      title: "Pending",
       value: stats.pendingOrders,
+      icon: Clock3,
     },
     {
-      title: "Delivered Orders",
+      title: "Delivered",
       value: stats.deliveredOrders,
+      icon: CheckCircle,
     },
     {
-      title: "Total Spent",
+      title: "Spent",
       value: `₦${stats.totalSpent.toLocaleString()}`,
+      icon: Wallet,
     },
   ];
 
   return (
     <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-      {cards.map((card) => (
-        <div
-          key={card.title}
-          className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
-        >
-          <p className="text-sm text-slate-500">
-            {card.title}
-          </p>
+      {cards.map((card) => {
+        const Icon = card.icon;
 
-          <h2 className="mt-4 text-4xl font-bold text-slate-900">
-            {card.value}
-          </h2>
-        </div>
-      ))}
+        return (
+          <div
+            key={card.title}
+            className="rounded-3xl bg-white p-6 shadow-sm transition hover:shadow-lg"
+          >
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-slate-500">
+                {card.title}
+              </p>
+
+              <Icon className="h-6 w-6 text-indigo-600" />
+            </div>
+
+            <h2 className="mt-4 text-4xl font-bold text-slate-900">
+              {card.value}
+            </h2>
+          </div>
+        );
+      })}
     </div>
   );
 }
