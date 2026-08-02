@@ -17,6 +17,8 @@ import FlashSale from "../components/dashboard/FlashSale";
 import HeroBanner from "../components/dashboard/HeroBanner";
 import SearchBanner from "../components/dashboard/SearchBanner";
 import TrendingProducts from "../components/dashboard/TrendingProducts";
+import PromoPopup from "../components/dashboard/PromoPopup";
+import FloatingPromo from "../components/dashboard/FloatingPromo";
 
 
 export default function DashboardPage() {
@@ -79,6 +81,8 @@ useEffect(() => {
   </div>
 
 </div> */}
+<PromoPopup />
+<FloatingPromo />
 <HeroBanner />
 <SearchBanner />
    <DashboardStats />

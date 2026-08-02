@@ -37,6 +37,7 @@ const orderId = await ctx.db.insert(
     userId: args.userId,
     total,
     status: "Pending Payment Approval",
+      addressId: args.addressId,
   }
 );
 
@@ -64,6 +65,7 @@ const orderId = await ctx.db.insert(
 export const getOrders = query({
   args: {
     userId: v.id("users"),
+     addressId: v.id("addresses"),
   },
 
   handler: async (ctx, args) => {
@@ -255,5 +257,40 @@ export const getDashboardStats = query({
       deliveredOrders,
       totalSpent,
     };
+  },
+});
+
+
+export const cancelOrder = mutation({
+  args: {
+    orderId: v.id("orders"),
+  },
+
+  handler: async (ctx, args) => {
+    const order = await ctx.db.get(
+      args.orderId
+    );
+
+    if (!order) {
+      throw new Error(
+        "Order not found"
+      );
+    }
+
+    if (
+      order.status === "Delivered" ||
+      order.status === "Shipped"
+    ) {
+      throw new Error(
+        "Order can no longer be cancelled"
+      );
+    }
+
+    await ctx.db.patch(
+      args.orderId,
+      {
+        status: "Cancelled",
+      }
+    );
   },
 });

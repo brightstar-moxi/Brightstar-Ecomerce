@@ -28,6 +28,7 @@ avatar: v.optional(v.string()),
     userId: v.id("users"),
     total: v.number(),
     status: v.string(),
+    addressId: v.id("addresses"),
   }),
 
 payments: defineTable({
@@ -47,6 +48,14 @@ orderItems: defineTable({
   price: v.number(),
 
   
+}),
+addresses: defineTable({
+  userId: v.id("users"),
+  fullName: v.string(),
+  phone: v.string(),
+  address: v.string(),
+  city: v.string(),
+  state: v.string(),
 }),
 
 });

@@ -5,6 +5,27 @@ import { api } from "@/convex/_generated/api";
 import OrderTimeline from "@/app/components/orders/OrdersTimeline";
 
 export default function OrdersPage() {
+  const cancelOrder =
+  useMutation(
+    api.orders.cancelOrder
+  );
+  const handleCancelOrder =
+  async (orderId: any) => {
+    const confirmed =
+      confirm(
+        "Cancel this order?"
+      );
+
+    if (!confirmed) return;
+
+    await cancelOrder({
+      orderId,
+    });
+
+    alert(
+      "Order cancelled"
+    );
+  };
   const user =
     typeof window !== "undefined"
       ? JSON.parse(
@@ -202,15 +223,44 @@ export default function OrdersPage() {
   </div>
 
   {/* TRACKING */}
-  <div className="border-t border-slate-100 p-6">
+<div className="border-t border-slate-100 p-6">
 
-    <h3 className="mb-4 text-lg font-semibold text-slate-900">
-      Track Order
-    </h3>
+  <h3 className="mb-4 text-lg font-semibold">
+    Track Order
+  </h3>
 
-    <OrderTimeline
-      status={order.status}
-    />
+  <OrderTimeline
+    status={order.status}
+  />
+
+  {/* ACTION BUTTONS */}
+  <div className="mt-6 flex flex-wrap gap-3">
+
+    <button className="rounded-xl border px-5 py-3">
+      Contact Support
+    </button>
+
+    <button className="rounded-xl border px-5 py-3">
+      Track Package
+    </button>
+
+    {order.status !== "Delivered" &&
+      order.status !== "Cancelled" && (
+        <button
+          onClick={() =>
+            handleCancelOrder(
+              order._id
+            )
+          }
+          className="rounded-xl bg-red-500 px-5 py-3 text-white hover:bg-red-600"
+        >
+          Cancel Order
+        </button>
+      )}
+
+  </div>
+
+
 
        {order.status === "Payment Rejected" && (
     <label className="mt-6 inline-flex cursor-pointer rounded-xl bg-red-600 px-5 py-3 font-medium text-white">
