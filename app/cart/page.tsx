@@ -123,7 +123,20 @@ export default function CartPage() {
 
   // const createOrder = useMutation(api.orders.createOrder);
   // const clearCart = useMutation(api.cart.clearCart);
+  const increaseQuantity =
+    useMutation(
+      api.cart.increaseQuantity
+    );
 
+  const decreaseQuantity =
+    useMutation(
+      api.cart.decreaseQuantity
+    );
+
+  const removeCartItem =
+    useMutation(
+      api.cart.removeCartItem
+    );
   // ✅ safe client-only state
   const user =
     typeof window !== "undefined"
@@ -151,7 +164,7 @@ export default function CartPage() {
   // const shipping = 0;
   // const tax = 33.1;
   // const total = subtotal + shipping + tax;
- const shipping = 0;
+  const shipping = 0;
   const tax = subtotal * 0.025;
 
   const total =
@@ -170,7 +183,7 @@ export default function CartPage() {
   return (
     <main className="min-h-screen bg-slate-50">
 
-      <Navbar />
+      {/* <Navbar /> */}
 
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
 
@@ -215,7 +228,7 @@ export default function CartPage() {
                         src={
                           item.product?.image ||
                           "/placeholder-product.jpg"}
-                       alt={item.product?.name || "Product"}
+                        alt={item.product?.name || "Product"}
                         width={100}
                         height={100}
                         className="h-24 w-24 object-cover"
@@ -238,13 +251,20 @@ export default function CartPage() {
 
                     {/* PRICE */}
                     <h3 className="w-24 text-lg font-semibold text-slate-900">
-                     ₦{item.product?.price?.toLocaleString()}
+                      ₦{item.product?.price?.toLocaleString()}
                     </h3>
 
                     {/* QUANTITY */}
                     <div className="flex h-11 items-center rounded-xl border border-slate-200">
 
-                      <button className="flex h-full w-10 items-center justify-center">
+                      <button
+                        onClick={() =>
+                          decreaseQuantity({
+                            cartId: item._id,
+                          })
+                        }
+                        className="flex h-full w-10 items-center justify-center"
+                      >
                         <Minus size={16} />
                       </button>
 
@@ -252,13 +272,27 @@ export default function CartPage() {
                         {item.quantity}
                       </span>
 
-                      <button className="flex h-full w-10 items-center justify-center">
+                      <button
+                        onClick={() =>
+                          increaseQuantity({
+                            cartId: item._id,
+                          })
+                        }
+                        className="flex h-full w-10 items-center justify-center"
+                      >
                         <Plus size={16} />
                       </button>
                     </div>
 
                     {/* DELETE */}
-                    <button className="text-red-500">
+                   <button
+  onClick={() =>
+    removeCartItem({
+      cartId: item._id,
+    })
+  }
+  className="text-red-500"
+>
                       <Trash2 size={18} />
                     </button>
                   </div>
@@ -283,7 +317,7 @@ export default function CartPage() {
                 </span>
 
                 <span className="font-medium text-slate-900">
-                 ₦{subtotal.toLocaleString()}
+                  ₦{subtotal.toLocaleString()}
                 </span>
               </div>
 
@@ -303,7 +337,7 @@ export default function CartPage() {
                 </span>
 
                 <span className="font-medium text-slate-900">
-                 ₦{tax.toFixed(2)}
+                  ₦{tax.toFixed(2)}
                 </span>
               </div>
 

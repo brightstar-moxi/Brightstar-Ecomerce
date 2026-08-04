@@ -14,6 +14,7 @@ import {
   LogOut,
   Menu,
   X,
+  Bell
 } from "lucide-react";
 
 const menuItems = [
@@ -37,11 +38,16 @@ const menuItems = [
     icon: MessageSquare,
     href: "/dashboard/messages",
   },
-  // {
-  //   title: "Addresses",
-  //   icon: MapPin,
-  //   href: "/dashboard/address",
-  // },
+  {
+  title: "Notifications",
+  icon: Bell,
+  href: "/dashboard/notifications",
+},
+  {
+    title: "Addresses",
+    icon: MapPin,
+    href: "/dashboard/address",
+  },
   // // {
   //   title: "Payment Methods",
   //   icon: CreditCard,

@@ -6,6 +6,10 @@ import { v } from "convex/values";
 export const createOrder = mutation({
   args: {
     userId: v.id("users"),
+    addressId: v.optional(
+    v.id("addresses")
+  ),
+
   },
 
   handler: async (ctx, args) => {
@@ -31,16 +35,37 @@ export const createOrder = mutation({
         (product?.price || 0) *
         item.quantity;
     }
-const orderId = await ctx.db.insert(
-  "orders",
-  {
+
+  let addressId = args.addressId;
+
+  if (!addressId) {
+    const firstAddress = await ctx.db
+      .query("addresses")
+      .filter((q) =>
+        q.eq(
+          q.field("userId"),
+          args.userId
+        )
+      )
+      .first();
+
+    addressId = firstAddress?._id;
+  }
+
+  const orderData: any = {
     userId: args.userId,
     total,
     status: "Pending Payment Approval",
-      addressId: args.addressId,
-  }
-);
+  };
 
+  if (addressId) {
+    orderData.addressId = addressId;
+  }
+
+  const orderId = await ctx.db.insert(
+    "orders",
+    orderData
+  );
     // CREATE ORDER ITEMS
     for (const item of cartItems) {
       const product = await ctx.db.get(
@@ -65,7 +90,7 @@ const orderId = await ctx.db.insert(
 export const getOrders = query({
   args: {
     userId: v.id("users"),
-     addressId: v.id("addresses"),
+     
   },
 
   handler: async (ctx, args) => {
@@ -91,25 +116,35 @@ export const getOrders = query({
           )
           .collect();
 
-        const products =
-          await Promise.all(
-            items.map(async (item) => {
-              const product =
-                await ctx.db.get(
-                  item.productId
-                );
+       const address = order.addressId
+  ? await ctx.db.get(order.addressId)
+  : null;
 
-              return {
-                ...item,
-                product,
-              };
-            })
-          );
+const products =
+  await Promise.all(
+    items.map(async (item) => {
+      const product =
+        await ctx.db.get(
+          item.productId
+        );
 
-        return {
-          ...order,
-          products,
-        };
+      return {
+        ...item,
+        product,
+      };
+    })
+  );
+
+return {
+  ...order,
+  products,
+  address,
+};
+
+        // return {
+        //   ...order,
+        //   products,
+        // };
       })
     );
   },
@@ -177,9 +212,45 @@ export const updateOrderStatus =
           status: args.status,
         }
       );
+      const order = await ctx.db.get(
+  args.orderId
+);
+
+await ctx.db.insert(
+  "notifications",
+  {
+    userId: order!.userId,
+    title: "Order Update",
+    message: `Your order is now ${args.status}`,
+    read: false,
+    createdAt: Date.now(),
+  }
+);
     },
   });
 
+  // export const getNotifications =
+  // query({
+  //   args: {
+  //     userId: v.id("users"),
+  //   },
+
+  //   handler: async (
+  //     ctx,
+  //     args
+  //   ) => {
+  //     return await ctx.db
+  //       .query("notifications")
+  //       .filter((q) =>
+  //         q.eq(
+  //           q.field("userId"),
+  //           args.userId
+  //         )
+  //       )
+  //       .order("desc")
+  //       .collect();
+  //   },
+  // });
   //delete order
 
   export const deleteOrder = mutation({

@@ -110,3 +110,81 @@ export const clearCart = mutation({
     }
   },
 });
+
+export const increaseQuantity =
+  mutation({
+    args: {
+      cartId: v.id("carts"),
+    },
+
+    handler: async (
+      ctx,
+      args
+    ) => {
+      const item =
+        await ctx.db.get(
+          args.cartId
+        );
+
+      if (!item) return;
+
+      await ctx.db.patch(
+        args.cartId,
+        {
+          quantity:
+            item.quantity + 1,
+        }
+      );
+    },
+  });
+  export const decreaseQuantity =
+  mutation({
+    args: {
+      cartId: v.id("carts"),
+    },
+
+    handler: async (
+      ctx,
+      args
+    ) => {
+      const item =
+        await ctx.db.get(
+          args.cartId
+        );
+
+      if (!item) return;
+
+      if (
+        item.quantity <= 1
+      ) {
+        await ctx.db.delete(
+          args.cartId
+        );
+
+        return;
+      }
+
+      await ctx.db.patch(
+        args.cartId,
+        {
+          quantity:
+            item.quantity - 1,
+        }
+      );
+    },
+  });
+  export const removeCartItem =
+  mutation({
+    args: {
+      cartId: v.id("carts"),
+    },
+
+    handler: async (
+      ctx,
+      args
+    ) => {
+      await ctx.db.delete(
+        args.cartId
+      );
+    },
+  });

@@ -39,7 +39,7 @@ export default function OrdersPage() {
       ? { userId: user.id }
       : "skip"
   );
-
+console.log("ORDERS:",orders);
   const payment = useQuery(
     api.payments.getMyPayment,
     user?.id
@@ -108,14 +108,15 @@ export default function OrdersPage() {
       </h1>
 
       <div className="space-y-4">
-      {orders.map((order) => (
+     {orders.map((order, index) => (
 <div
-  key={order._id}
+    key={`${order._id}-${index}`}
   className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:shadow-lg"
 >
 
   {/* HEADER */}
   <div className="grid grid-cols-1 gap-4 md:grid-cols-4 p-4">
+
 
   <div>
     <p className="text-xs uppercase tracking-wide text-slate-400">
@@ -168,6 +169,17 @@ export default function OrdersPage() {
   </div>
 
 </div>
+<div className="border-y border-slate-100 bg-indigo-50 px-6 py-4">
+
+  <h3 className="font-semibold text-indigo-700">
+    Your order is currently {order.status}
+  </h3>
+
+  <p className="mt-1 text-sm text-indigo-600">
+    We will notify you whenever the status changes.
+  </p>
+
+</div>
   {/* PRODUCTS */}
   <div className="p-6">
 
@@ -177,10 +189,9 @@ export default function OrdersPage() {
 
     <div className="space-y-4">
 
-      {order.products?.map(
-        (item: any) => (
+    {order.products?.map((item, index) => (
           <div
-            key={item._id}
+             key={`${item._id}-${index}`}
             className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-4"
           >
 
@@ -217,8 +228,36 @@ export default function OrdersPage() {
           </div>
         )
       )}
+<div className="mt-6 flex items-center justify-between border-t pt-4">
+  <span className="text-slate-500">
+    Total Amount
+  </span>
+
+  <span className="text-2xl font-bold text-indigo-600">
+    ₦{order.total.toLocaleString()}
+  </span>
+</div>
 
     </div>
+{order.address && (
+  
+  <div className="rounded-2xl border border-slate-200 bg-gradient-to-r from-slate-50 to-white p-6">
+   <h3 className="mb-4 text-lg font-bold text-slate-900">
+  Delivery Address
+</h3>
+
+    <p>{order.address.fullName}</p>
+    <p>{order.address.phone}</p>
+    <p>{order.address.address}</p>
+    <p>
+      {order.address.city},
+      {order.address.state}
+    </p>
+  </div>
+  
+) 
+
+}
 
   </div>
 
@@ -236,30 +275,27 @@ export default function OrdersPage() {
   {/* ACTION BUTTONS */}
   <div className="mt-6 flex flex-wrap gap-3">
 
-    <button className="rounded-xl border px-5 py-3">
-      Contact Support
+  <button className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-medium hover:bg-slate-50">
+    Contact Support
+  </button>
+
+  <button className="rounded-xl bg-indigo-600 px-5 py-3 font-medium text-white hover:bg-indigo-700">
+    Track Package
+  </button>
+
+  {order.status !== "Delivered" &&
+   order.status !== "Cancelled" && (
+    <button
+      onClick={() =>
+        handleCancelOrder(order._id)
+      }
+      className="rounded-xl bg-red-500 px-5 py-3 font-medium text-white hover:bg-red-600"
+    >
+      Cancel Order
     </button>
+  )}
 
-    <button className="rounded-xl border px-5 py-3">
-      Track Package
-    </button>
-
-    {order.status !== "Delivered" &&
-      order.status !== "Cancelled" && (
-        <button
-          onClick={() =>
-            handleCancelOrder(
-              order._id
-            )
-          }
-          className="rounded-xl bg-red-500 px-5 py-3 text-white hover:bg-red-600"
-        >
-          Cancel Order
-        </button>
-      )}
-
-  </div>
-
+</div>
 
 
        {order.status === "Payment Rejected" && (

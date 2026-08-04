@@ -183,7 +183,7 @@ const handleCheckout = async () => {
   return (
     <main className="min-h-screen bg-slate-50">
 
-      <Navbar />
+      {/* <Navbar /> */}
 
       <section className="mx-auto max-w-7xl px-4 py-10 md:px-6 lg:px-8">
 
